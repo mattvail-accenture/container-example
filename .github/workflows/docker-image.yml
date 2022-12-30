@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file dockerfile --tag ${{env.container_name}}
+      run: docker build . --file dockerfile --image ${{env.container_name}}
       
     - name: Upload image
       uses: ishworkh/docker-image-artifact-upload@v1
@@ -29,25 +29,9 @@ jobs:
         image: ${{env.container_name}}
         retention_days : 1
 
-
-    # - name: Hello world action step
-    #   id: hello
-    #   uses: tmp/project_name:latest
-    #   with:
-    #     who-to-greet: 'Mona the Octocat'
-
-    # Use the output from the `hello` step
-    - name: Get the output time
-      env:
-        who-to-greet:  # id of input
-          description: 'Who to greet'
-          required: true
-          default: 'World'
-      run:
-        using: 'docker'
-        image: project_name:latest
-        args:
-          - ${{ env.who-to-greet }}        
+    - name: Start docker containers
+      run: |
+        docker run ${{env.container_name}}
   
   # dev:
   #   needs: [build]
