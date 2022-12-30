@@ -19,10 +19,11 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file dockerfile --tag ${{env.container_name}}
       
-    - name: Upload image
-      uses: ishworkh/docker-image-artifact-upload@v1
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v3
       with:
-        image: ${{env.container_name}}
+        name: ${{env.container_name}}
+        path: ${{env.container_name}}
   
   # dev:
   #   needs: [build]
