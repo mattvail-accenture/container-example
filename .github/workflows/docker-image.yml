@@ -43,6 +43,15 @@ jobs:
       run: echo "hello"
 
 
+  download_image:
+    - name: Checkout project
+      uses: actions/checkout@v2
+
+    - name: Download image
+      uses: ishworkh/docker-image-artifact-download@v1
+      with:
+        image: "project_name:latest"
+
   # test:
   #   needs: [build]
 
