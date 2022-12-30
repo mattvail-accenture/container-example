@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       container_name : project_name:latest
+
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
@@ -24,16 +25,17 @@ jobs:
         image: ${{env.container_name}}
         retention_days : 1
   
-  test:
+  dev:
     needs: [build]
 
     runs-on: ubuntu-latest
     env:
+      name: dev
       container_name : project_name:latest
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file dockerfile --tag ${{env.container_name}}
+      run: ehco "hello"
 
 
     # runs-on: ubuntu-latest
