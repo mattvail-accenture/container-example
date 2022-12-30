@@ -25,7 +25,11 @@ jobs:
       with:
         image: ${{env.container_name}}
         retention_days : 1
-  
+
+    - name: Start docker containers
+      run: |
+        docker run ${{env.container_name}}
+
   dev:
     needs: [build]
 
@@ -38,9 +42,6 @@ jobs:
     - name: Build the Docker image
       run: echo "hello"
 
-    - name: Start docker containers
-      run: |
-        docker run ${{env.container_name}}
 
   # test:
   #   needs: [build]
