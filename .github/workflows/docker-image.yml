@@ -26,11 +26,11 @@ jobs:
   
   dev:
     needs: [build]
+    runs-on: ubuntu-latest
     env:
       name: dev
       container_name : project_name:latest
 
-    runs-on: ubuntu-latest
     steps:
     - name: Hello world action step
       id: hello
