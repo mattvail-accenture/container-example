@@ -28,36 +28,60 @@ jobs:
       with:
         image: ${{env.container_name}}
         retention_days : 1
+
+
+    - name: Hello world action step
+      id: hello
+      uses: project_name:latest
+      with:
+        who-to-greet: 'Mona the Octocat'
+        
+    # Use the output from the `hello` step
+    - name: Get the output time
+
+      inputs:
+        who-to-greet:  # id of input
+          description: 'Who to greet'
+          required: true
+          default: 'World'
+      outputs:
+        time: # id of output
+          description: 'The time we greeted you'
+      runs:
+        using: 'docker'
+        image: project_name:latest
+        args:
+          - ${{ inputs.who-to-greet }}        
   
-  dev:
-    needs: [build]
+  # dev:
+  #   needs: [build]
 
-    runs-on: ubuntu-latest
-    env:
-      name: dev
-      container_name : project_name:latest
-    steps:
-      - name: Hello world action step
-        id: hello
-        uses: project_name:latest
-        with:
-          who-to-greet: 'Mona the Octocat'
-      # Use the output from the `hello` step
-      - name: Get the output time
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     name: dev
+  #     container_name : project_name:latest
+  #   steps:
+  #     - name: Hello world action step
+  #       id: hello
+  #       uses: project_name:latest
+  #       with:
+  #         who-to-greet: 'Mona the Octocat'
+  #     # Use the output from the `hello` step
+  #     - name: Get the output time
 
-        inputs:
-          who-to-greet:  # id of input
-            description: 'Who to greet'
-            required: true
-            default: 'World'
-        outputs:
-          time: # id of output
-            description: 'The time we greeted you'
-        runs:
-          using: 'docker'
-          image: project_name:latest
-          args:
-            - ${{ inputs.who-to-greet }}        
+  #       inputs:
+  #         who-to-greet:  # id of input
+  #           description: 'Who to greet'
+  #           required: true
+  #           default: 'World'
+  #       outputs:
+  #         time: # id of output
+  #           description: 'The time we greeted you'
+  #       runs:
+  #         using: 'docker'
+  #         image: project_name:latest
+  #         args:
+  #           - ${{ inputs.who-to-greet }}        
 
     # runs-on: ubuntu-latest
 
