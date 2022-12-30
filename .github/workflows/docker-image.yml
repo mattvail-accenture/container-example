@@ -48,6 +48,10 @@ jobs:
       with:
         image: "project_name:latest"
 
+    - name: Start docker containers
+      run: |
+        docker run project_name:latest
+
   # test:
   #   needs: [build]
 
