@@ -30,11 +30,11 @@ jobs:
         retention_days : 1
 
 
-    - name: Hello world action step
-      id: hello
-      uses: tmp/project_name:latest
-      with:
-        who-to-greet: 'Mona the Octocat'
+    # - name: Hello world action step
+    #   id: hello
+    #   uses: tmp/project_name:latest
+    #   with:
+    #     who-to-greet: 'Mona the Octocat'
 
     # Use the output from the `hello` step
     - name: Get the output time
