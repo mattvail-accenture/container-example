@@ -38,6 +38,10 @@ jobs:
     - name: Build the Docker image
       run: echo "hello"
 
+    - name: Start docker containers
+      run: |
+        docker run ${{env.container_name}}
+
   # test:
   #   needs: [build]
 
