@@ -1,6 +1,4 @@
 name: Docker Image CI
-  env:
-    run_number : GITHUB_RUN_NUMBER
 
 on:
   push:
