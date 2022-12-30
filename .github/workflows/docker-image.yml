@@ -12,18 +12,17 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      container_name : project-name:${GITHUB_RUN_NUMBER}
+      container_name : project-name:latest
 
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file dockerfile --tag ${{env.container_name}}
+      run: docker build . --file dockerfile --tag ${{container_name}}
       
-    - name: Archive code coverage results
-      uses: actions/upload-artifact@v3
+    - name: Upload image
+      uses: ishworkh/docker-image-artifact-upload@v1
       with:
-        name: ${{env.container_name}}
-        path: ${{env.container_name}}
+        image: ${{container_name}}
   
   # dev:
   #   needs: [build]
