@@ -55,7 +55,7 @@ jobs:
             description: 'The time we greeted you'
         runs:
           using: 'docker'
-          image: 'Dockerfile'
+          image: project_name:latest
           args:
             - ${{ inputs.who-to-greet }}        
 
