@@ -44,7 +44,20 @@ jobs:
           who-to-greet: 'Mona the Octocat'
       # Use the output from the `hello` step
       - name: Get the output time
-        run: echo "The time was ${{ steps.hello.outputs.time }}"
+
+        inputs:
+          who-to-greet:  # id of input
+            description: 'Who to greet'
+            required: true
+            default: 'World'
+        outputs:
+          time: # id of output
+            description: 'The time we greeted you'
+        runs:
+          using: 'docker'
+          image: 'Dockerfile'
+          args:
+            - ${{ inputs.who-to-greet }}        
 
     # runs-on: ubuntu-latest
 
