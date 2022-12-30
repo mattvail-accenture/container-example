@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 env: 
-  IMAGE_
+  IMAGE : test
 
 
 jobs:
