@@ -47,7 +47,7 @@ jobs:
       outputs:
         time: # id of output
           description: 'The time we greeted you'
-      runs:
+      run:
         using: 'docker'
         image: project_name:latest
         args:
