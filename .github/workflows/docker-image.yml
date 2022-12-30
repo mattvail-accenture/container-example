@@ -47,10 +47,32 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
+      run: eco "hello"
+
+  stage:
+    needs: [test]
+
+    runs-on: ubuntu-latest
+    env:
+      name: dev
+      container_name : project_name:latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
       run: echo "hello"
 
 
+  prod:
+    needs: [dev]
 
+    runs-on: ubuntu-latest
+    env:
+      name: dev
+      container_name : project_name:latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: echo "hello"
 
     # runs-on: ubuntu-latest
 
