@@ -17,17 +17,17 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag static-name:$(date +%s)
       
-    - name: Upload image
-      uses: ishworkh/docker-image-artifact-upload@v1
-      with:
-        image: "test_image:latest"
+    # - name: Upload image
+    #   uses: ishworkh/docker-image-artifact-upload@v1
+    #   with:
+    #     image: "test_image:latest"
   
-  dev:
-    needs: [build]
-    environment:
-      name: dev
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+  # dev:
+  #   needs: [build]
+  #   environment:
+  #     name: dev
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
   
-      - name: Configure AWS credentials
+  #     - name: Configure AWS credentials
