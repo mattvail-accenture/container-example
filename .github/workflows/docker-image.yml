@@ -17,12 +17,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file dockerfile --tag ${{container_name}}
+      run: docker build . --file dockerfile --tag ${{env.container_name}}
       
     - name: Upload image
       uses: ishworkh/docker-image-artifact-upload@v1
       with:
-        image: ${{container_name}}
+        image: ${{env.container_name}}
   
   # dev:
   #   needs: [build]
