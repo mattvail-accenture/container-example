@@ -15,12 +15,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file dockerfile --tag project-name:${GITHUB_RUN_NUMBER}
+      run: docker build . --file dockerfile --tag project-name:test
       
     - name: Upload image
       uses: ishworkh/docker-image-artifact-upload@v1
       with:
-        image: "project-name:${{GITHUB_RUN_NUMBER}}"
+        image: "project-name:test"
   
   # dev:
   #   needs: [build]
