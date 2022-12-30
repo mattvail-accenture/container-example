@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [ "main" ]
 
-env: 
-  IMAGE : test
-
 
 jobs:
 
@@ -21,19 +18,27 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file dockerfile --image ${{env.container_name}}
+      run: docker build . --file dockerfile --tag ${{env.container_name}}
       
     - name: Upload image
       uses: ishworkh/docker-image-artifact-upload@v1
       with:
         image: ${{env.container_name}}
         retention_days : 1
-
-    # - name: Start docker containers
-    #   run: |
-    #     docker run ${{env.container_name}}
   
-  # dev:
+  dev:
+    needs: [build]
+
+    runs-on: ubuntu-latest
+    env:
+      name: dev
+      container_name : project_name:latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: echo "hello"
+
+  # test:
   #   needs: [build]
 
   #   runs-on: ubuntu-latest
@@ -41,43 +46,50 @@ jobs:
   #     name: dev
   #     container_name : project_name:latest
   #   steps:
-  #     - name: Hello world action step
-  #       id: hello
-  #       uses: project_name:latest
-  #       with:
-  #         who-to-greet: 'Mona the Octocat'
-  #     # Use the output from the `hello` step
-  #     - name: Get the output time
+  #   - uses: actions/checkout@v3
+  #   - name: Build the Docker image
+  #     run: eco "hello"
 
-  #       inputs:
-  #         who-to-greet:  # id of input
-  #           description: 'Who to greet'
-  #           required: true
-  #           default: 'World'
-  #       outputs:
-  #         time: # id of output
-  #           description: 'The time we greeted you'
-  #       runs:
-  #         using: 'docker'
-  #         image: project_name:latest
-  #         args:
-  #           - ${{ inputs.who-to-greet }}        
+  # stage:
+  #   needs: [test]
 
-    # runs-on: ubuntu-latest
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     name: dev
+  #     container_name : project_name:latest
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Build the Docker image
+  #     run: echo "hello"
 
-    # env:
-    #   name: dev
-    #   container_name : project_name:latest
 
-    # container: ${{env.container_name}}    
+  # prod:
+  #   needs: [dev]
+
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     name: dev
+  #     container_name : project_name:latest
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Build the Docker image
+  #     run: echo "hello"
+
+  #   # runs-on: ubuntu-latest
+
+  #   # env:
+  #   #   name: dev
+  #   #   container_name : project_name:latest
+
+  #   # container: ${{env.container_name}}    
 
     
 
 
-    # steps:
-    #   - name: Check out repository code
-    #     uses: actions/checkout@v3
+  #   # steps:
+  #   #   - name: Check out repository code
+  #   #     uses: actions/checkout@v3
 
-    # # Use the output from the `hello` step
-    # - name: Get the output time
-    #   run: echo "The time was ${{ steps.hello.outputs.time }}"
+  #   # # Use the output from the `hello` step
+  #   # - name: Get the output time
+  #   #   run: echo "The time was ${{ steps.hello.outputs.time }}"
