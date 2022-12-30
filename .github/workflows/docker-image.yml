@@ -24,7 +24,7 @@ jobs:
         image: ${{env.container_name}}
         retention_days : 1
   
-  dev:
+  test:
     needs: [build]
     runs-on: ubuntu-latest
 
@@ -40,7 +40,7 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-        
+
     # Use the output from the `hello` step
     - name: Get the output time
       run: echo "The time was ${{ steps.hello.outputs.time }}"
