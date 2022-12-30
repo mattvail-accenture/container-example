@@ -39,11 +39,10 @@ jobs:
     # Use the output from the `hello` step
     - name: Get the output time
       env:
-        inputs:
-          who-to-greet:  # id of input
-            description: 'Who to greet'
-            required: true
-            default: 'World'
+        who-to-greet:  # id of input
+          description: 'Who to greet'
+          required: true
+          default: 'World'
       outputs:
         time: # id of output
           description: 'The time we greeted you'
@@ -51,7 +50,7 @@ jobs:
         using: 'docker'
         image: project_name:latest
         args:
-          - ${{ env.inputs.who-to-greet }}        
+          - ${{ env.who-to-greet }}        
   
   # dev:
   #   needs: [build]
