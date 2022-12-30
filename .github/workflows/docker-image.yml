@@ -32,10 +32,10 @@ jobs:
 
     - name: Hello world action step
       id: hello
-      uses: project_name:latest
+      uses: tmp/project_name:latest
       with:
         who-to-greet: 'Mona the Octocat'
-        
+
     # Use the output from the `hello` step
     - name: Get the output time
 
