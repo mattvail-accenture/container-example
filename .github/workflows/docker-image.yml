@@ -17,10 +17,10 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file dockerfile --tag project-name:${GITHUB_RUN_NUMBER}
       
-    # - name: Upload image
-    #   uses: ishworkh/docker-image-artifact-upload@v1
-    #   with:
-    #     image: "test_image:latest"
+    - name: Upload image
+      uses: ishworkh/docker-image-artifact-upload@v1
+      with:
+        image: "project-name:${GITHUB_RUN_NUMBER}"
   
   # dev:
   #   needs: [build]
