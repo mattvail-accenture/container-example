@@ -24,19 +24,19 @@ jobs:
         image: ${{env.container_name}}
         retention_days : 1
   
-  dev:
-    needs: [build]
-    env:
-      name: dev
-      container_name : project_name:latest
+  # dev:
+  #   needs: [build]
+  #   env:
+  #     name: dev
+  #     container_name : project_name:latest
 
-    runs-on: ubuntu-latest
-    steps:
-    - name: Hello world action step
-      id: hello
-      uses: ${{env.container_name}}
-      with:
-        who-to-greet: 'Mona the Octocat'
-    # Use the output from the `hello` step
-    - name: Get the output time
-      run: echo "The time was ${{ steps.hello.outputs.time }}"
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Hello world action step
+  #     id: hello
+  #     uses: ${{env.container_name}}
+  #     with:
+  #       who-to-greet: 'Mona the Octocat'
+  #   # Use the output from the `hello` step
+  #   - name: Get the output time
+  #     run: echo "The time was ${{ steps.hello.outputs.time }}"
