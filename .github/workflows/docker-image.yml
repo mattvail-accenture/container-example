@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       name: dev
-      SUPER_SECRET: ${{ secrets.ROLENAME }}      
+      SUPER_SECRET: ${{ env.secrets.ROLENAME }}      
       container_name : project_name:latest
     steps:
     - uses: actions/checkout@v3
