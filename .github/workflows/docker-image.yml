@@ -6,7 +6,7 @@ on:
 
 env:
   GLOBAL_PREFIX: Docker
-  CONTAINER_NAME: hello:$GITHUB_RUN_NUMBER
+  CONTAINER_NAME: "hello:$GITHUB_RUN_NUMBER"
 
 jobs:
 
