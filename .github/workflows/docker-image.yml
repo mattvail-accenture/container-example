@@ -6,7 +6,7 @@ on:
 
 env:
   GLOBAL_PREFIX: Docker
-  CONTAINER_NAME: HELLOAPP:latest
+  CONTAINER_NAME: hello:$GITHUB_RUN_NUMBER
 
 jobs:
 
@@ -18,7 +18,7 @@ jobs:
 
     - name: Output Message
       run: |
-        echo "this step will build your container, it will use the $CONTAINER_NAME"
+        echo "this step will build your container, it will use the $CONTAINER_NAME, on url $GITHUB_GRAPHQL_URL, and run number $GITHUB_RUN_NUMBER"
 
     - name: Build the Docker image
       run: docker build . --file dockerfile --tag $CONTAINER_NAME
