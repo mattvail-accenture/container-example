@@ -29,7 +29,7 @@ jobs:
     - name: Upload image
       uses: ishworkh/docker-image-artifact-upload@v1
       with:
-        image: ${{STEPVAR}}
+        image: ${STEPVAR}
         retention_days : 1
 
   scret-example:
