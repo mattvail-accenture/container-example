@@ -20,7 +20,7 @@ jobs:
     - name: Output Message
       run: |
 
-        echo ::set-env name=STEPVAR::$CONTAINER_NAME+$GITHUB_RUN_NUMBER
+        echo ::set-env name=STEPVAR::$CONTAINER_NAME$GITHUB_RUN_NUMBER
         echo "this step will build your container, it will use the $STEPVAR, on url $GITHUB_GRAPHQL_URL, and run number $GITHUB_RUN_NUMBER"
 
     - name: Build the Docker image
@@ -29,7 +29,7 @@ jobs:
     - name: Upload image
       uses: ishworkh/docker-image-artifact-upload@v1
       with:
-        image: $STEPVAR
+        image: ${{STEPVAR}}
         retention_days : 1
 
   scret-example:
