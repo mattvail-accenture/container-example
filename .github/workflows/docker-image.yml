@@ -49,8 +49,8 @@ jobs:
 
     - name: Start docker containers
       run: |
-        echo ${{secrets.TEST}} | sed 's/./& /g' 
-        docker run project_name:latest '$SUPER_SECRET'
+        echo "$name"
+        docker run project_name:latest $SUPER_SECRET
 
   # test:
   #   needs: [build]
