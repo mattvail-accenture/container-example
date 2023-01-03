@@ -47,10 +47,10 @@ jobs:
     - uses: actions/checkout@v3
 
 
-    # - name: Download image
-    #   uses: ishworkh/docker-image-artifact-download@v1
-    #   with:
-    #     image: "project_name:latest"
+    - name: Download image
+      uses: ishworkh/docker-image-artifact-download@v1
+      with:
+        image: "project_name:latest"
 
     - name: Start docker containers
       run: |
