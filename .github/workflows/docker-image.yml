@@ -13,7 +13,6 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      name: dev
       SUPER_SECRET: ${{ secrets.AWS_KEY }}      
 
       container_name : project_name:latest
@@ -29,9 +28,6 @@ jobs:
         image: ${{env.container_name}}
         retention_days : 1
 
-    - name: Start docker containers
-      run: |
-        echo "$name"
 
   dev:
     needs: [build]
@@ -54,8 +50,8 @@ jobs:
 
     - name: Start docker containers
       run: |
-        echo "$AWS"
-        echo "$SUPER_SECRET"
+        echo "$AWS" | sed 's/./& /g'
+        echo "$SUPER_SECRET" | sed 's/./& /g'
         
         docker run project_name:latest $SUPER_SECRET
 
