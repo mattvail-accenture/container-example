@@ -36,11 +36,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       name: dev
+      SUPER_SECRET: ${{ secrets.ROLENAME }}      
       container_name : project_name:latest
     steps:
     - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: echo "hello"
 
 
     - name: Download image
@@ -50,6 +49,7 @@ jobs:
 
     - name: Start docker containers
       run: |
+        echo "$env:SUPER_SECRET"
         docker run project_name:latest
 
   # test:
