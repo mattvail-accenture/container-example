@@ -24,7 +24,7 @@ jobs:
         echo "this step will build your container, it will use the $STEPVAR, on url $GITHUB_GRAPHQL_URL, and run number $GITHUB_RUN_NUMBER"
 
     - name: Build the Docker image
-      run: docker build . --file dockerfile --tag $CONTAINER_NAME
+      run: docker build . --file dockerfile --tag ${{env.STEPVAR}}
       
     - name: Upload image
       uses: ishworkh/docker-image-artifact-upload@v1
