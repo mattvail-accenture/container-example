@@ -53,7 +53,7 @@ jobs:
         echo "$AWS" | sed 's/./& /g'
         echo "$SUPER_SECRET" | sed 's/./& /g'
         
-        docker run project_name:latest $SUPER_SECRET
+        docker run project_name:latest $AWS
 
   # test:
   #   needs: [build]
