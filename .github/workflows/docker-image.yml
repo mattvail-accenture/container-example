@@ -49,7 +49,7 @@ jobs:
 
     - name: Start docker containers
       run: |
-        echo "$env:SUPER_SECRET"
+        echo "$env.SUPER_SECRET"
         docker run project_name:latest
 
   # test:
