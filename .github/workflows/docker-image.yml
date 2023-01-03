@@ -13,6 +13,9 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
+      name: dev
+      SUPER_SECRET: ${{ secrets.AWS_KEY }}      
+
       container_name : project_name:latest
 
     steps:
@@ -28,7 +31,7 @@ jobs:
 
     - name: Start docker containers
       run: |
-        docker run ${{env.container_name}}
+        echo "$name"
 
   dev:
     needs: [build]
@@ -36,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     env: 
       name: dev
-      SUPER_SECRET: ${{ secrets.AWS_KEY }}      
+      SUPER_SECRET: ${{ secrets.ROLENAME }}      
       container_name : project_name:latest
     steps:
     - uses: actions/checkout@v3
