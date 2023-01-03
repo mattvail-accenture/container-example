@@ -34,7 +34,7 @@ jobs:
     needs: [build]
 
     runs-on: ubuntu-latest
-    environment:
+    env:
       name: dev
       SUPER_SECRET: ${{ secrets.ROLENAME }}      
       container_name : project_name:latest
@@ -50,7 +50,7 @@ jobs:
     - name: Start docker containers
       run: |
         echo "$env.SUPER_SECRET"
-        docker run project_name:latest ${{ secrets.TEST }}  
+        docker run project_name:latest $SUPER_SECRET
 
   # test:
   #   needs: [build]
