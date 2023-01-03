@@ -34,7 +34,8 @@ jobs:
     needs: [build]
 
     runs-on: ubuntu-latest
-    env:
+    environment: 
+      name: Development
       SUPER_SECRET: ${{ secrets.ROLENAME }}      
       container_name : project_name:latest
       name: ${{ needs.build.outputs.env_name }}
