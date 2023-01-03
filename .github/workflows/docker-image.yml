@@ -34,7 +34,7 @@ jobs:
     needs: [build]
 
     runs-on: ubuntu-latest
-    environment: 
+    env: 
       name: dev
       SUPER_SECRET: ${{ secrets.AWS_KEY }}      
       container_name : project_name:latest
