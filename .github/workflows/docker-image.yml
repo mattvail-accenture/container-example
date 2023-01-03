@@ -36,9 +36,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: 
       name: dev
-      SUPER_SECRET: ${{ secrets.ROLENAME }}      
+      SUPER_SECRET: ${{ secrets.AWS_KEY }}      
       container_name : project_name:latest
-      name: ${{ needs.build.outputs.env_name }}
     steps:
     - uses: actions/checkout@v3
 
