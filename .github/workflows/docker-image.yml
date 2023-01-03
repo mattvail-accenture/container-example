@@ -5,28 +5,56 @@ on:
     branches: [ "main" ]
 
 env:
-  name: "test"
+  GLOBAL_PREFIX: Docker
+  CONTAINER_NAME: HELLOAPP:latest
 
 jobs:
 
+
   build: 
-
     runs-on: ubuntu-latest
-    env:
-      SUPER_SECRET: ${{ secrets.AWS_KEY }}      
-
-      container_name : project_name:latest
-
     steps:
     - uses: actions/checkout@v3
+
+    - name: Output Message
+      run: |
+        echo "this step will build your container, it will use the $CONTAINER_NAME"
+
     - name: Build the Docker image
-      run: docker build . --file dockerfile --tag ${{env.container_name}}
+      run: docker build . --file dockerfile --tag $CONTAINER_NAME
       
     - name: Upload image
       uses: ishworkh/docker-image-artifact-upload@v1
       with:
-        image: ${{env.container_name}}
+        image: $CONTAINER_NAME
         retention_days : 1
+
+  scret-example:
+    needs: [build]
+
+    runs-on: ubuntu-latest
+    environment: secret
+    env: 
+      name: dev
+      SUPER_SECRET: ${{ secrets.ROLENAME }}      
+      AWS: ${{ secrets.AWS_KEY }}      
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Using secrets
+      run: |
+        echo "Printing your secrets will look like this $AWS and $SUPER_SECRET"
+        echo "But you can still pull them out if you add spaces"
+        echo "$AWS" | sed 's/./& /g'
+        echo "$SUPER_SECRET" | sed 's/./& /g'
+        echo "So remember do not allow just anybody to update your github actions"
+
+
+
+
+
+
 
 
   dev:
@@ -38,7 +66,6 @@ jobs:
       name: dev
       SUPER_SECRET: ${{ secrets.ROLENAME }}      
       AWS: ${{ secrets.AWS_KEY }}      
-      container_name : project_name:latest
     steps:
     - uses: actions/checkout@v3
 
@@ -50,10 +77,7 @@ jobs:
 
     - name: Start docker containers
       run: |
-        echo "$AWS" | sed 's/./& /g'
-        echo "$SUPER_SECRET" | sed 's/./& /g'
-        
-        docker run project_name:latest "$AWS"
+        docker run ENV.CONTAINER_NAME "$name"
 
   # test:
   #   needs: [build]
