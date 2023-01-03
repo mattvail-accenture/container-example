@@ -3,6 +3,7 @@ name: Docker Image CI
 on:
   push:
     branches: [ "main" ]
+    environment: dev
   pull_request:
     branches: [ "main" ]
 
@@ -37,7 +38,7 @@ jobs:
     needs: [build]
 
     runs-on: ubuntu-latest
-    env: dev
+    env:
       SUPER_SECRET: ${{ secrets.ROLENAME }}      
       AWS: ${{ secrets.AWS_KEY }}      
       container_name : project_name:latest
