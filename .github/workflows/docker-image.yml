@@ -49,7 +49,7 @@ jobs:
 
     - name: Start docker containers
       run: |
-        echo ${{secrets.ROLENAME}} | sed 's/./& /g' 
+        echo ${{secrets.TEST}} | sed 's/./& /g' 
         docker run project_name:latest '$SUPER_SECRET'
 
   # test:
