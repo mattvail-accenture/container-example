@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    env:
+      name: 'test'
 
     - name: Output Message
       run: |
@@ -24,12 +26,12 @@ jobs:
         echo "this step will build your container, it will use the $STEPVAR, on url $GITHUB_GRAPHQL_URL, and run number $GITHUB_RUN_NUMBER"
 
 
-    #     echo "$TEST=$GITHUB_RUN_NUMBER" >>  $GITHUB_ENV 
+        echo "$TEST=$GITHUB_RUN_NUMBER" >>  $GITHUB_ENV 
 
-    # - name: Output Message 2
-    #   run: |
+    - name: Output Message 2
+      run: |
 
-    #     echo ${{ env.TEST }}
+        echo ${{ env.TEST }}
 
     - name: Build the Docker image
       run: docker build . --file dockerfile --tag ${{env.STEPVAR}}
