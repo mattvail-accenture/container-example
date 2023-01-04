@@ -8,7 +8,6 @@ env:
   GLOBAL_PREFIX: Docker
   CONTAINER_NAME: hello:version
   ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
-  TEST: 'why not have this here '
 jobs:
 
 
