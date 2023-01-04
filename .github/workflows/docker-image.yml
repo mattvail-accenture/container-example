@@ -18,7 +18,7 @@ jobs:
     - name: Build Version Number & output message
       run: |
         echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
-        echo "this step will build your container, it will use the $container_name as the name"
+        echo "this step will build your container, it will use the $container_name as the name."
 
     - name: Use the value
       id: step_two
