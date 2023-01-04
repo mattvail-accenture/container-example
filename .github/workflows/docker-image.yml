@@ -23,7 +23,7 @@ jobs:
     - name: Output Message
       run: |
 
-        echo ::set-env name=STEPVAR::$CONTAINER_NAME$GITHUB_RUN_NUMBER
+        echo ::set-env tname=STEPVAR::$CONTAINER_NAME$GITHUB_RUN_NUMBER
         echo "this step will build your container, it will use the $STEPVAR, on url $GITHUB_GRAPHQL_URL, and run number $GITHUB_RUN_NUMBER"
 
 
