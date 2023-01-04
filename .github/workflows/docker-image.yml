@@ -56,6 +56,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Use the value
+      id: step_two
+      run: |
+        echo "${{ env.action_state }}"
+
+
     - name: Using secrets
       run: |
         echo "Printing your secrets will look like this $AWS and $SUPER_SECRET"
@@ -72,27 +78,27 @@ jobs:
 
 
 
-  dev:
-    needs: [build]
+  # dev:
+  #   needs: [build]
 
-    runs-on: ubuntu-latest
-    environment: dev
-    env: 
-      name: dev
-      SUPER_SECRET: ${{ secrets.ROLENAME }}      
-      AWS: ${{ secrets.AWS_KEY }}      
-    steps:
-    - uses: actions/checkout@v3
+  #   runs-on: ubuntu-latest
+  #   environment: dev
+  #   env: 
+  #     name: dev
+  #     SUPER_SECRET: ${{ secrets.ROLENAME }}      
+  #     AWS: ${{ secrets.AWS_KEY }}      
+  #   steps:
+  #   - uses: actions/checkout@v3
 
 
-    - name: Download image
-      uses: ishworkh/docker-image-artifact-download@v1
-      with:
-        image: "project_name:latest"
+  #   - name: Download image
+  #     uses: ishworkh/docker-image-artifact-download@v1
+  #     with:
+  #       image: "project_name:latest"
 
-    - name: Start docker containers
-      run: |
-        docker run ENV.CONTAINER_NAME "$name"
+  #   - name: Start docker containers
+  #     run: |
+  #       docker run ENV.CONTAINER_NAME "$name"
 
   # test:
   #   needs: [build]
