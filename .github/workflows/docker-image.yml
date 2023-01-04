@@ -38,7 +38,7 @@ jobs:
     needs: [build]
 
     runs-on: ubuntu-latest
-    environment: dev
+    environment: secret
     env: 
       name: dev
       SUPER_SECRET: ${{ secrets.ROLENAME }}      
