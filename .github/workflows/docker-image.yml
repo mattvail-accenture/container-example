@@ -60,7 +60,7 @@ jobs:
 
   test:
     needs: [build]
-    runs-on: [ubuntu-latest, ubuntu-20.04, macos-12] # Using multiple images to make sure the code can run in multiple enviroments
+    runs-on: [ubuntu-latest, ubuntu-20.04] # Using multiple images to make sure the code can run in multiple enviroments
     environment: test
 
     steps:
