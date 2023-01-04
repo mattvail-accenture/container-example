@@ -22,8 +22,8 @@ jobs:
       run: |
         echo "Set the container name to the format wanted. This variable can not be global and has to be ran as part of a shell due to Github limitations on enviroment variables. If you try to set it in the below command it will come through as a string as such: $BAD_CONTAINER_NAME"
         echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
-        echo "The container tag will be: $container_name"
-        echo " $GITHUB_REF"
+        echo "The container tag will be: ${{ env.container_name }}"
+        echo ${{ github.event.repository.name }}
 
     - name: Build the docker image
       run: docker build . --file dockerfile --tag ${{env.container_name}} # normal docker commands
