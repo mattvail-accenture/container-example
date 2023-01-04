@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Build Version Number & output message test
+    - name: Build Version Number & output message test 2
       run: |
         echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
         echo "this step will build your container, it will use the $container_name as the name. changed my mind"
