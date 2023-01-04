@@ -22,7 +22,7 @@ jobs:
 
     - name: Output Message
       run: |
-        echo "action_state=yellow" >> $GITHUB_ENV
+        echo "action_state=$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
 
     - name: Use the value
       id: step_two
