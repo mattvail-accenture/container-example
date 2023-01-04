@@ -8,7 +8,6 @@ env:
   GLOBAL_PREFIX: Docker
   CONTAINER_NAME: hello:version
   ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
-  name:  dev
 
 jobs:
 
@@ -21,16 +20,16 @@ jobs:
     - name: Output Message
       run: |
 
-        # echo ::set-env name=STEPVAR::$CONTAINER_NAME$GITHUB_RUN_NUMBER
-        # echo "this step will build your container, it will use the $STEPVAR, on url $GITHUB_GRAPHQL_URL, and run number $GITHUB_RUN_NUMBER"
+        echo ::set-env name=STEPVAR::$CONTAINER_NAME$GITHUB_RUN_NUMBER
+        echo "this step will build your container, it will use the $STEPVAR, on url $GITHUB_GRAPHQL_URL, and run number $GITHUB_RUN_NUMBER"
 
 
-        echo "$TEST=$GITHUB_RUN_NUMBER" >>  $GITHUB_ENV 
+    #     echo "$TEST=$GITHUB_RUN_NUMBER" >>  $GITHUB_ENV 
 
-    - name: Output Message 2
-      run: |
+    # - name: Output Message 2
+    #   run: |
 
-        echo ${{ env.TEST }}
+    #     echo ${{ env.TEST }}
 
     - name: Build the Docker image
       run: docker build . --file dockerfile --tag ${{env.STEPVAR}}
