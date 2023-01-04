@@ -15,19 +15,15 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Output Message
+    - name: Build Version Number & output message
       run: |
         echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
-        echo "this step will build your container, it will use the $container_name, on url $GITHUB_GRAPHQL_URL, and run number $GITHUB_RUN_NUMBER"
-
-
+        echo "this step will build your container, it will use the $container_name as the name"
 
     - name: Use the value
       id: step_two
       run: |
         echo "${{ env.container_name }}"
-
-
 
     - name: Build the Docker image
       run: docker build . --file dockerfile --tag ${{env.container_name}}
@@ -50,101 +46,121 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Output Message
+
+    - name: Build verions 
       run: |
         echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
 
-
     - name: Using secrets
       run: |
-        echo "Printing your secrets will look like this $AWS and $SUPER_SECRET"
+        echo "Printing your enviroment secrets will look like this $AWS and $SUPER_SECRET"
         echo "But you can still pull them out if you add spaces"
         echo "$AWS" | sed 's/./& /g'
         echo "$SUPER_SECRET" | sed 's/./& /g'
-        echo "So remember do not allow just anybody to update your github actions"
-        echo ${{env.container_name}}
+        echo "So remember do not allow just anybody to update your github actions as they could exploit this."
+        echo "Note you still need the build step above to access this name ${{env.container_name}}"
 
 
+  dev:
+    needs: [build]
+
+    runs-on: ubuntu-latest
+    environment: dev
+    env: 
+      name: dev
+      SUPER_SECRET: ${{ secrets.ROLENAME }}      
+      AWS: ${{ secrets.AWS_KEY }}      
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build verions 
+      run: |
+        echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+
+    - name: Download image
+      uses: ishworkh/docker-image-artifact-download@v1
+      with:
+        image: "${{env.container_name}}"
+
+    - name: Start docker containers
+      run: |
+        docker run ${{env.container_name}} "$container_name"
+
+  double-up:
+    needs: [build]
+
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Message from the creator
+      run: |
+        echo "Note how i am grouped with dev"
+        echo "this is great for organizing and grouping similar jobs"
+        echo "so that you can complete you deployments faster"
+
+  stage:
+    needs: [dev, double-up]
+
+    runs-on: ubuntu-latest
+    environment: stage
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build verions 
+      run: |
+        echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+
+    - name: Download image
+      uses: ishworkh/docker-image-artifact-download@v1
+      with:
+        image: "${{env.container_name}}"
+
+    - name: Start docker containers
+      run: |
+        docker run ${{env.container_name}} "I require two different stanges to be done, this ensures that all jobs are complete"
 
 
+  prod:
+    needs: [stage]
 
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+    - uses: actions/checkout@v3
 
+    - name: Build verions 
+      run: |
+        echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
 
+    - name: Download image
+      uses: ishworkh/docker-image-artifact-download@v1
+      with:
+        image: "${{env.container_name}}"
 
-  # dev:
-  #   needs: [build]
+    - name: Start docker containers
+      run: |
+        docker run ${{env.container_name}} "finally we are at production, did you notice that i required an approval."
 
-  #   runs-on: ubuntu-latest
-  #   environment: dev
-  #   env: 
-  #     name: dev
-  #     SUPER_SECRET: ${{ secrets.ROLENAME }}      
-  #     AWS: ${{ secrets.AWS_KEY }}      
-  #   steps:
-  #   - uses: actions/checkout@v3
-
-
-  #   - name: Download image
-  #     uses: ishworkh/docker-image-artifact-download@v1
-  #     with:
-  #       image: "project_name:latest"
-
-  #   - name: Start docker containers
-  #     run: |
-  #       docker run ENV.CONTAINER_NAME "$name"
-
-  # test:
-  #   needs: [build]
-
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     name: dev
-  #     container_name : project_name:latest
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: Build the Docker image
-  #     run: eco "hello"
-
-  # stage:
-  #   needs: [test]
-
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     name: dev
-  #     container_name : project_name:latest
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: Build the Docker image
-  #     run: echo "hello"
-
-
-  # prod:
-  #   needs: [dev]
-
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     name: dev
-  #     container_name : project_name:latest
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: Build the Docker image
-  #     run: echo "hello"
-
-  #   # runs-on: ubuntu-latest
-
-  #   # env:
-  #   #   name: dev
-  #   #   container_name : project_name:latest
-
-  #   # container: ${{env.container_name}}    
-
-    
-
-
-  #   # steps:
-  #   #   - name: Check out repository code
-  #   #     uses: actions/checkout@v3
-
-  #   # # Use the output from the `hello` step
-  #   # - name: Get the output time
-  #   #   run: echo "The time was ${{ steps.hello.outputs.time }}"
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ap-south-1
+  
+      # - name: Login to Amazon ECR
+      #   id: login-ecr
+      #   uses: aws-actions/amazon-ecr-login@v1
+  
+      # - name: Build, tag, and push image to Amazon ECR
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     ECR_REPOSITORY: docker_nodejs_demo
+      #     IMAGE_TAG: nodejs_demo_image
+      #   run: |
+      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
