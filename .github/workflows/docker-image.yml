@@ -106,7 +106,7 @@ jobs:
 
     - name: Start docker containers
       run: |
-        docker run ${{env.container_name}} "$AWS and $SUPER_SECRET"
+        docker run ${{env.container_name}} "notice these variables are specific to the dev enviroment $AWS and $SUPER_SECRET"
 
  # If you need to run two jobs at a time you can 
   double_up:
@@ -114,7 +114,10 @@ jobs:
 
     runs-on: ubuntu-latest
     environment: dev
-
+    env: 
+      SUPER_SECRET: ${{ secrets.ROLENAME }}      
+      AWS: ${{ secrets.AWS_KEY }}    
+      
     steps:
     - uses: actions/checkout@v3
 
@@ -142,7 +145,7 @@ jobs:
 
     - name: Start docker containers
       run: |
-        docker run ${{env.container_name}} "I require three different jobs to be done, this ensures that all jobs are complete, that are needed."
+        docker run ${{env.container_name}} "I require three different jobs to be done, this ensures that all jobs are complete, that are needed. Notice these variables are specific to the dev enviroment $AWS and $SUPER_SECRET"
 
 
   prod:
