@@ -2,7 +2,7 @@ name: Docker Image CI
 
 # Trigger 
 on:
-  merge:
+  push:
     branches: [ "main" ]
 
 # Gloabl ENV
@@ -28,7 +28,7 @@ jobs:
     - name: Build the docker image
       run: docker build . --file dockerfile --tag ${{ env.container_name }} # normal docker commands
       
-    # uploading image as a github artifact so it can be reused in later jobs. (Important only to have one build) 
+    # Uploading the image as a github artifact so it can be reused in later jobs. (Important only to have one build) 
     - name: Upload image to github artifact
       uses: ishworkh/docker-image-artifact-upload@v1
       with:
@@ -59,8 +59,32 @@ jobs:
         echo "$SUPER_SECRET" | sed 's/./& /g'
         echo "As a general rule, remember lock down your github actions to only those that need access."
 
-  dev:
+  test:
     needs: [build]
+    runs-on: [ubuntu-latest, ubuntu-20.04, macos-12] # Using multiple images to make sure the code can run in multiple enviroments
+    environment: test
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set container Name # must do this each time since it is set at the job level 
+      run: |
+        echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+
+      # You have to download the artifact you store if you want to use them in another job. 
+    - name: Download image
+      uses: ishworkh/docker-image-artifact-download@v1
+      with:
+        image: "${{env.container_name}}"
+
+    # run and test my code.
+    - name: Start docker containers
+      run: |
+        docker run ${{env.container_name}} "$container_name"
+
+  # each job now can deploy or run on the enviroment you want. 
+  dev:
+    needs: [test]
     runs-on: ubuntu-latest
     environment: dev
     env: 
@@ -71,7 +95,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set container Name # must do this each time since it is set at the job level 
+    - name: Set container Name 
       run: |
         echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
 
@@ -82,10 +106,11 @@ jobs:
 
     - name: Start docker containers
       run: |
-        docker run ${{env.container_name}} "$container_name"
+        docker run ${{env.container_name}} "$AWS and $SUPER_SECRET"
 
-  double-up:
-    needs: [build]
+ # If you need to run two jobs at a time you can 
+  double_up:
+    needs: [test]
 
     runs-on: ubuntu-latest
     environment: dev
@@ -95,13 +120,11 @@ jobs:
 
     - name: Message from the creator
       run: |
-        echo "Note how i am grouped with dev"
-        echo "this is great for organizing and grouping similar jobs"
-        echo "so that you can complete you deployments faster"
+        echo "This job is grouped with dev"
+        echo "It is great for breaking out jobs that do not depend on each other and speeding up your pipeline"
 
   stage:
-    needs: [dev, double-up, secret_example]
-
+    needs: [dev, double_up, secret_example] # requiring multiple jobs to be complete to add better protections or additional setup in the pipeline
     runs-on: ubuntu-latest
     environment: stage
 
@@ -119,7 +142,7 @@ jobs:
 
     - name: Start docker containers
       run: |
-        docker run ${{env.container_name}} "I require two different stanges to be done, this ensures that all jobs are complete"
+        docker run ${{env.container_name}} "I require three different jobs to be done, this ensures that all jobs are complete, that are needed."
 
 
   prod:
@@ -141,8 +164,10 @@ jobs:
 
     - name: Start docker containers
       run: |
-        docker run ${{env.container_name}} "finally we are at production, did you notice that i required an approval."
+        docker run ${{env.container_name}} "Finally we are at production, did you notice that i required an approval."
 
+
+# note this file shows the use of a container over and over again. In a real enviroment, you would use the jobs to deploy the code out. For example the following is the template for uploading a docker container to ECR.
       # - name: Configure AWS credentials
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:
