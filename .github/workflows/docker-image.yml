@@ -36,7 +36,7 @@ jobs:
     needs: [build]
 
     runs-on: ubuntu-latest
-    environment: secret
+    environment: dev
     env: 
       name: dev
       SUPER_SECRET: ${{ secrets.ROLENAME }}      
@@ -52,6 +52,7 @@ jobs:
         echo "$AWS" | sed 's/./& /g'
         echo "$SUPER_SECRET" | sed 's/./& /g'
         echo "So remember do not allow just anybody to update your github actions"
+        echo ${{env.STEPVAR}}
 
 
 
