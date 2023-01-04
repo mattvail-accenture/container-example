@@ -22,17 +22,14 @@ jobs:
 
     - name: Output Message
       run: |
+        echo "action_state=yellow" >> $GITHUB_ENV
+        
+  - name: Use the value
+    id: step_two
+    run: |
+      echo "${{ env.action_state }}" # This will output 'yellow'
 
-        # echo ::set-env tname=STEPVAR::$CONTAINER_NAME$GITHUB_RUN_NUMBER
-        # echo "this step will build your container, it will use the $STEPVAR, on url $GITHUB_GRAPHQL_URL, and run number $GITHUB_RUN_NUMBER"
 
-  
-        echo "$TEST=$GITHUB_RUN_NUMBER" >>  $GITHUB_ENV 
-
-    - name: Output Message 2
-      run: |
-
-        echo ${{ env.TEST }}
 
     - name: Build the Docker image
       run: docker build . --file dockerfile --tag ${{env.STEPVAR}}
