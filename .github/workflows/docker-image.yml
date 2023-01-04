@@ -21,7 +21,7 @@ jobs:
       run: |
 
         echo ::set-env name=STEPVAR::$CONTAINER_NAME$GITHUB_RUN_NUMBER
-        echo "${{ env.action_state }}" >> $TEST
+        echo "$GITHUB_RUN_NUMBER" >> $TEST
         echo $TEST
         echo "this step will build your container, it will use the $STEPVAR, on url $GITHUB_GRAPHQL_URL, and run number $GITHUB_RUN_NUMBER"
 
