@@ -34,7 +34,7 @@ jobs:
         image: ${{env.container_name}}
         retention_days : 1
 
-  scret-example:
+  secret-example:
     needs: [build]
 
     runs-on: ubuntu-latest
@@ -102,7 +102,7 @@ jobs:
         echo "so that you can complete you deployments faster"
 
   stage:
-    needs: [dev, double-up, scret-example]
+    needs: [dev, double-up, secret-example]
 
     runs-on: ubuntu-latest
     environment: stage
