@@ -5,10 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-  GLOBAL_PREFIX: Docker
-  CONTAINER_NAME: hello:version
-  ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
-  action_state: ''
+  GLOBAL_PREFIX: helloworld
 jobs:
 
 
@@ -20,27 +17,25 @@ jobs:
 
     - name: Output Message
       run: |
+        echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+        echo "this step will build your container, it will use the $container_name, on url $GITHUB_GRAPHQL_URL, and run number $GITHUB_RUN_NUMBER"
 
-        echo ::set-env name=STEPVAR::$CONTAINER_NAME$GITHUB_RUN_NUMBER
-        echo "this step will build your container, it will use the $STEPVAR, on url $GITHUB_GRAPHQL_URL, and run number $GITHUB_RUN_NUMBER"
 
-
-        echo "action_state=$CONTAINER_NAME$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
 
     - name: Use the value
       id: step_two
       run: |
-        echo "${{ env.action_state }}"
+        echo "${{ env.container_name }}"
 
 
 
     - name: Build the Docker image
-      run: docker build . --file dockerfile --tag ${{env.STEPVAR}}
+      run: docker build . --file dockerfile --tag ${{env.container_name}}
       
     - name: Upload image
       uses: ishworkh/docker-image-artifact-upload@v1
       with:
-        image: ${{env.STEPVAR}}
+        image: ${{env.container_name}}
         retention_days : 1
 
   scret-example:
@@ -55,11 +50,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
-    - name: Use the value
-      id: step_two
+    - name: Output Message
       run: |
-        echo "${{ env.action_state }}"
+        echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
 
 
     - name: Using secrets
@@ -69,7 +62,7 @@ jobs:
         echo "$AWS" | sed 's/./& /g'
         echo "$SUPER_SECRET" | sed 's/./& /g'
         echo "So remember do not allow just anybody to update your github actions"
-        echo ${{env.STEPVAR}}
+        echo ${{env.container_name}}
 
 
 
