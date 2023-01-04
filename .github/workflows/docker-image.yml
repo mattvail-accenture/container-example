@@ -102,7 +102,7 @@ jobs:
         echo "so that you can complete you deployments faster"
 
   stage:
-    needs: [dev, double-up]
+    needs: [dev, double-up, scret-example]
 
     runs-on: ubuntu-latest
     environment: stage
