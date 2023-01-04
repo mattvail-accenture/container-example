@@ -1,76 +1,103 @@
 name: Docker Image CI
 
+# Trigger 
 on:
   push:
     branches: [ "main" ]
 
+# Gloabl ENV
 env:
   GLOBAL_PREFIX: helloworld
+  BAD_CONTAINER_NAME: $GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER
+
 jobs:
-
-
+  # Each job is independent and uses it own set of instructions to complete the job. 
+  # Build the docker image 
   build: 
-  
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # declare OS type, important and will effect bianaries.  
     steps:
     - uses: actions/checkout@v3
 
-    - name: Build Version Number & output message test
+    - name: Set build version 
       run: |
+        echo "Set the container name to the format wanted. This variable can not be global and has to be ran as part of a shell due to Github limitations on enviroment variables. If you try to set it in the below command it will come through as a string as such: $BAD_CONTAINER_NAME"
         echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
-        echo "this step will build your container, it will use the $container_name as the name. changed my mind"
-    - name: Use the value
-      id: step_two
-      run: |
-        echo "${{ env.container_name }}"
-    - name: Build the Docker image
-      run: docker build . --file dockerfile --tag ${{env.container_name}}
+        echo "The container tag will be: $container_name"
+
+    - name: Build the docker image
+      run: docker build . --file dockerfile --tag ${{env.container_name}} # normal docker commands
       
-    - name: Upload image
+    # Uploading the image as a github artifact so it can be reused in later jobs. (Important only to have one build) 
+    - name: Upload image to github artifact
       uses: ishworkh/docker-image-artifact-upload@v1
       with:
-        image: ${{env.container_name}}
+        image: ${{ env.container_name }}
         retention_days : 1
 
-  secret-example:
+  # This is just an example of how to interact with secrets in the settings. 
+  secret_example:
+    # this job will not run unless build finishes. 
     needs: [build]
-
     runs-on: ubuntu-latest
-    environment: secret
+
+    # env and enviroment are two different things and can not be used interchangably. If you want a job to use the setting you configured in the settings tab you must set this first.
+    environment: secret  
     env: 
-      name: dev
-      SUPER_SECRET: ${{ secrets.ROLENAME }}      
+      SUPER_SECRET: ${{ secrets.ROLENAME }}  # setting secret as variable.    
       AWS: ${{ secrets.AWS_KEY }}      
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Build verions 
-      run: |
-        echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
     - name: Using secrets
       run: |
-        echo "Printing your enviroment secrets will look like this $AWS and $SUPER_SECRET"
-        echo "But you can still pull them out if you add spaces"
+        echo "Printing your enviroment secrets will look like: $AWS & $SUPER_SECRET"
+        echo "Printing a variable that doesn't exist will be blank: $NULL_VAR" 
+        echo "While GitHub does hid your secrets, you can pull them out."
         echo "$AWS" | sed 's/./& /g'
         echo "$SUPER_SECRET" | sed 's/./& /g'
-        echo "So remember do not allow just anybody to update your github actions as they could exploit this."
-        echo "Note you still need the build step above to access this name ${{env.container_name}}"
-  dev:
-    needs: [build]
+        echo "As a general rule, remember lock down your github actions to only those that need access."
 
+  test:
+    needs: [build]
+    runs-on: [ubuntu-latest, ubuntu-20.04, macos-12] # Using multiple images to make sure the code can run in multiple enviroments
+    environment: test
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set container Name # must do this each time since it is set at the job level 
+      run: |
+        echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+
+      # You have to download the artifact you store if you want to use them in another job. 
+    - name: Download image
+      uses: ishworkh/docker-image-artifact-download@v1
+      with:
+        image: "${{env.container_name}}"
+
+    # run and test my code.
+    - name: Start docker containers
+      run: |
+        docker run ${{env.container_name}} "$container_name"
+
+  # each job now can deploy or run on the enviroment you want. 
+  dev:
+    needs: [test]
     runs-on: ubuntu-latest
     environment: dev
     env: 
       name: dev
       SUPER_SECRET: ${{ secrets.ROLENAME }}      
-      AWS: ${{ secrets.AWS_KEY }}      
+      AWS: ${{ secrets.AWS_KEY }}    
+  
     steps:
     - uses: actions/checkout@v3
 
-    - name: Build verions 
+    - name: Set container Name 
       run: |
         echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+
     - name: Download image
       uses: ishworkh/docker-image-artifact-download@v1
       with:
@@ -78,24 +105,28 @@ jobs:
 
     - name: Start docker containers
       run: |
-        docker run ${{env.container_name}} "$container_name"
-  double-up:
-    needs: [build]
+        docker run ${{env.container_name}} "notice these variables are specific to the dev enviroment $AWS and $SUPER_SECRET"
+
+ # If you need to run two jobs at a time you can 
+  double_up:
+    needs: [test]
 
     runs-on: ubuntu-latest
     environment: dev
+    env: 
+      SUPER_SECRET: ${{ secrets.ROLENAME }}      
+      AWS: ${{ secrets.AWS_KEY }}    
 
     steps:
     - uses: actions/checkout@v3
 
     - name: Message from the creator
       run: |
-        echo "Note how i am grouped with dev"
-        echo "this is great for organizing and grouping similar jobs"
-        echo "so that you can complete you deployments faster"
-  stage:
-    needs: [dev, double-up, secret-example]
+        echo "This job is grouped with dev"
+        echo "It is great for breaking out jobs that do not depend on each other and speeding up your pipeline"
 
+  stage:
+    needs: [dev, double_up, secret_example] # requiring multiple jobs to be complete to add better protections or additional setup in the pipeline
     runs-on: ubuntu-latest
     environment: stage
 
@@ -105,6 +136,7 @@ jobs:
     - name: Build verions 
       run: |
         echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+
     - name: Download image
       uses: ishworkh/docker-image-artifact-download@v1
       with:
@@ -112,7 +144,9 @@ jobs:
 
     - name: Start docker containers
       run: |
-        docker run ${{env.container_name}} "I require two different stanges to be done, this ensures that all jobs are complete"
+        docker run ${{env.container_name}} "I require three different jobs to be done, this ensures that all jobs are complete, that are needed. Notice these variables are specific to the dev enviroment $AWS and $SUPER_SECRET"
+
+
   prod:
     needs: [stage]
 
@@ -124,6 +158,7 @@ jobs:
     - name: Build verions 
       run: |
         echo "container_name=$GLOBAL_PREFIX:version.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+
     - name: Download image
       uses: ishworkh/docker-image-artifact-download@v1
       with:
@@ -131,7 +166,10 @@ jobs:
 
     - name: Start docker containers
       run: |
-        docker run ${{env.container_name}} "finally we are at production, did you notice that i required an approval."
+        docker run ${{env.container_name}} "Finally we are at production, did you notice that i required an approval."
+
+
+# note this file shows the use of a container over and over again. In a real enviroment, you would use the jobs to deploy the code out. For example the following is the template for uploading a docker container to ECR.
       # - name: Configure AWS credentials
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:
